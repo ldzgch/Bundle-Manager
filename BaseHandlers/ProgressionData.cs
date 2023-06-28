@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using BundleFormat;
@@ -273,7 +273,7 @@ namespace BaseHandlers
 
         public EntryType GetEntryType(BundleEntry entry)
         {
-            return EntryType.ProgressionData;
+            return EntryTypeBP.ProgressionData;
         }
 
         private void Clear()

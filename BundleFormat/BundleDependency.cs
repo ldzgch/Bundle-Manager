@@ -28,7 +28,7 @@ namespace BundleFormat
                 }
             }
 
-            if (Entry != null && Entry.Type == EntryType.VertexDescriptor)
+            if (Entry != null && Entry.IsType( EntryTypeBP.VertexDescriptor))
             {
                 VertexDesc desc = VertexDesc.Read(Entry);
                 value = ", Attribute Count: " + desc.AttributeCount.ToString("D2");
@@ -38,7 +38,7 @@ namespace BundleFormat
 
             string info = "(External)";
             if (Entry != null)
-                info = "(" + location + ": " + EntryIndex.ToString("D3") + ", " + Entry.Type + value + extra + ")";
+                info = "(" + location + ": " + EntryIndex.ToString("D3") + ", " + Entry.Type.ToString() + value + extra + ")";
             return "ID: 0x" + EntryID.ToString("X8") + ", PtrOffset: 0x" + EntryPointerOffset.ToString("X8") + " " + info;
         }
     }

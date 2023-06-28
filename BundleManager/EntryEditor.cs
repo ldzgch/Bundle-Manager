@@ -431,7 +431,7 @@ namespace BundleManager
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("ID: 0x" + _entry.ID.ToString("X8"));
-            sb.AppendLine("Type: " + _entry.Type);
+            sb.AppendLine("Type: " + (int)_entry.Type);
             sb.AppendLine("Has Header: " + _entry.HasHeader);
             sb.AppendLine("Has Body: " + _entry.HasBody);
             List<BundleDependency> dependencies = _entry.GetDependencies();
@@ -461,7 +461,7 @@ namespace BundleManager
             {
                 ImageVisible = false;
             }
-            else if (_entry.Type == EntryType.Texture)
+            else if (_entry.IsType(EntryTypeBP.Texture))
             {
                 if (_entry.Console)
                     Image = GameImage.GetImagePS3(_entry.EntryBlocks[0].Data, _entry.EntryBlocks[1].Data);
@@ -696,7 +696,7 @@ namespace BundleManager
 
         private void infoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Entry.Type != EntryType.Renderable)
+            if (!Entry.IsType ( EntryTypeBP.Renderable))
                 return;
 
             string modelInfo = "";

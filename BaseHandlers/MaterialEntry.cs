@@ -43,7 +43,7 @@ namespace BaseHandlers
                 //t.StopLog();
 
                 //DebugTimer t2 = DebugTimer.Start("LoadTextureState");
-                if (descEntry1 != null && descEntry1.Type == EntryType.TextureState)
+                if (descEntry1 != null && descEntry1.IsType(EntryTypeBP.TextureState)) 
                 {
                     TextureState state = TextureState.Read(descEntry1);
 

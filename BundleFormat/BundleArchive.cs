@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Text;
 using System.Xml;
 using BundleUtilities;
 
@@ -41,7 +44,7 @@ namespace BundleFormat
         //public int BodyStart;
         //public int ArchiveSize;
         public Flags Flags;
-        
+
         public bool Console => Platform == BundlePlatform.X360 || Platform == BundlePlatform.PS3;
 
         public string ResourceStringTable;
@@ -66,7 +69,7 @@ namespace BundleFormat
                 _dirty = value;
                 if (!_dirty)
                 {
-                    foreach(BundleEntry entry in Entries)
+                    foreach (BundleEntry entry in Entries)
                     {
                         entry.Dirty = false;
                     }
@@ -185,7 +188,8 @@ namespace BundleFormat
                 {
                     Debug.WriteLine(ex.Message + "\n" + ex.StackTrace);
                     return null;
-                } catch (ReadFailedError ex)
+                }
+                catch (ReadFailedError ex)
                 {
                     Debug.WriteLine(ex.Message + "\n" + ex.StackTrace);
                     return null;
@@ -282,7 +286,7 @@ namespace BundleFormat
                 br.ReadUInt32(); // unknown mem stuff
 
                 entry.DependenciesListOffset = br.ReadInt32();
-                entry.Type = (EntryType)br.ReadUInt32();
+                entry.Type  = (EntryTypeBP ) br.ReadInt32();
 
                 //uint[] sizes = new uint[2];
 
@@ -304,7 +308,8 @@ namespace BundleFormat
                     br.ReadUInt32(); // Alignment value, should be 1
                     br.ReadUInt32(); // other blocks. Maybe used but I'm ignoring it.
                     br.ReadUInt32(); // Alignment value, should be 1
-                } else
+                }
+                else
                 {
                     //sizes[0] = br.ReadUInt32();
                     entry.EntryBlocks[0] = new EntryBlock();
@@ -460,7 +465,7 @@ namespace BundleFormat
 
             br.BaseStream.Position -= 8;
             Version = br.ReadInt32();
-            if (Version != 2)
+            if (!(Version == 2 | Version == 3)) // allow nfs hp bundles
             {
                 throw new ReadFailedError("Unsupported Bundle Version: " + Version);
             }
@@ -469,10 +474,22 @@ namespace BundleFormat
             RSTOffset = br.ReadInt32();
             EntryCount = br.ReadInt32();
             IDBlockOffset = br.ReadInt32();
-            uint[] fileBlockOffsets = new uint[3];
-            fileBlockOffsets[0] = br.ReadUInt32();
-            fileBlockOffsets[1] = br.ReadUInt32();
-            fileBlockOffsets[2] = br.ReadUInt32();
+            uint[] fileBlockOffsets;
+            if (Version == 2 )
+            {
+                fileBlockOffsets = new uint[3];
+                fileBlockOffsets[0] = br.ReadUInt32();
+                fileBlockOffsets[1] = br.ReadUInt32();
+                fileBlockOffsets[2] = br.ReadUInt32();
+
+            } else
+            {
+                fileBlockOffsets = new uint[4];
+                fileBlockOffsets[0] = br.ReadUInt32();
+                fileBlockOffsets[1] = br.ReadUInt32();
+                fileBlockOffsets[2] = br.ReadUInt32();
+                fileBlockOffsets[3] = br.ReadUInt32();
+            }
             Flags = (Flags)br.ReadInt32();
 
             // 8 Bytes Padding
@@ -482,6 +499,14 @@ namespace BundleFormat
             for (int i = 0; i < EntryCount; i++)
             {
                 BundleEntry entry = new BundleEntry(this);
+                if (Version == 2)
+                {   
+                    entry.EntryBlocks = new EntryBlock[3];
+                }
+                else
+                {
+                    entry.EntryBlocks = new EntryBlock[4];
+                }
 
                 entry.Index = i;
 
@@ -491,7 +516,6 @@ namespace BundleFormat
 
                 entry.References = br.ReadUInt64();
 
-                entry.EntryBlocks = new EntryBlock[3];
                 for (int j = 0; j < entry.EntryBlocks.Length; j++)
                 {
                     entry.EntryBlocks[j] = new EntryBlock();
@@ -542,14 +566,20 @@ namespace BundleFormat
                 }
 
                 entry.DependenciesListOffset = br.ReadInt32();
-                entry.Type = (EntryType)br.ReadInt32();
+                int t = br.ReadInt32();
+                entry.Type = (Version == 2) ? (EntryTypeBP)t: (EntryTypeNFS)t;
                 entry.DependencyCount = br.ReadInt16();
-
+                    
                 br.BaseStream.Position += 2; // Padding
+                if (Version == 3)
+                {
+                    br.BaseStream.Position += 4; // Padding
+                }
 
                 entry.Dirty = false;
 
                 Entries.Add(entry);
+
             }
 
             if (Flags.HasFlag(Flags.HasResourceStringTable))
@@ -564,7 +594,7 @@ namespace BundleFormat
 
             return true;
         }
-
+      
         public void Write(string path)
         {
             Stream s = File.Open(path, FileMode.Create);
@@ -785,14 +815,15 @@ namespace BundleFormat
                 return null;
             }
 
-            br.BaseStream.Position += 4;
+            int version = br.ReadInt32();
+            // br.BaseStream.Position += 4;
 
             int platformInt = br.ReadInt32();
             if (platformInt != 1)
                 platformInt = Util.ReverseBytes(platformInt);
             BundlePlatform platform = (BundlePlatform)platformInt;
             br.BigEndian = platform == BundlePlatform.X360 || platform == BundlePlatform.PS3;
-            
+
             br.BaseStream.Position = 0xC;
             uint rstOffset = br.ReadUInt32();
             int fileCount = br.ReadInt32();
@@ -819,11 +850,12 @@ namespace BundleFormat
             {
                 uint id = br.ReadUInt32();
                 br.BaseStream.Position += 0x34;
-                EntryType type = (EntryType)br.ReadUInt32();
+                int t = br.ReadInt32();
+                EntryType type = (version == 2) ? (EntryTypeBP)t : (EntryTypeNFS)t;
                 br.BaseStream.Position += 0x4;
 
                 DebugInfo debug = default;
-                
+
                 if (debugInfo != null && debugInfo.ContainsKey(id))
                     debug = debugInfo[id];
 
@@ -839,7 +871,7 @@ namespace BundleFormat
         public static EntryType GetEntryType(string path, uint id, bool console = false)
         {
             DebugTimer timer = DebugTimer.Start("GetEntryType");
-            EntryType result = EntryType.Invalid;
+            EntryType result = EntryTypeBP.Invalid;
 
             Stream s = File.Open(path, FileMode.Open, FileAccess.Read);
             BinaryReader2 br = new BinaryReader2(s);
@@ -849,9 +881,9 @@ namespace BundleFormat
                 timer.StopLog();
                 br.Close();
                 s.Close();
-                return EntryType.Invalid;
+                return EntryTypeBP.Invalid;
             }
-            
+            int version = br.ReadInt32();
             br.BaseStream.Position += 4;
 
             int platformInt = br.ReadInt32();
@@ -859,7 +891,7 @@ namespace BundleFormat
                 platformInt = Util.ReverseBytes(platformInt);
             BundlePlatform platform = (BundlePlatform)platformInt;
             br.BigEndian = platform == BundlePlatform.X360 || platform == BundlePlatform.PS3;
-            
+
             br.BaseStream.Position = 0x10;
             int fileCount = br.ReadInt32();
             int metaStart = br.ReadInt32();
@@ -870,7 +902,8 @@ namespace BundleFormat
             {
                 uint id2 = br.ReadUInt32();
                 br.BaseStream.Position += 0x34;
-                EntryType type = (EntryType) br.ReadUInt32();
+                int t = br.ReadInt32();
+                EntryType type = (version == 2) ? (EntryTypeBP)t : (EntryTypeNFS)t;
                 br.BaseStream.Position += 0x4;
 
                 if (id2 == id)

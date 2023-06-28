@@ -8,7 +8,7 @@ namespace LuaList
     {
         public override void Init()
         {
-            EntryTypeRegistry.Register(EntryType.LUAList, new LuaList());
+            EntryTypeRegistry.Register(EntryTypeBP.LUAList, new LuaList());
         }
 
         public override string GetID()

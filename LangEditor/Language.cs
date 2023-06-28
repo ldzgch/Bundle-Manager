@@ -110,7 +110,7 @@ namespace LangEditor
 
         public EntryType GetEntryType(BundleEntry entry)
         {
-            return EntryType.Language;
+            return EntryTypeBP.Language;
         }
 
         public IEntryEditor GetEditor(BundleEntry entry)

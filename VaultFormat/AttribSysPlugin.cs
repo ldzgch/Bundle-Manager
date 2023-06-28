@@ -7,7 +7,7 @@ namespace VaultFormat
     {
         public override void Init()
         {
-            EntryTypeRegistry.Register(EntryType.AttribSysVault, new AttribSys());
+            EntryTypeRegistry.Register(EntryTypeBP.AttribSysVault, new AttribSys());
         }
 
         public override string GetID()

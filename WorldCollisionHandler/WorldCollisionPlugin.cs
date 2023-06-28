@@ -11,7 +11,7 @@ namespace WorldCollisionHandler
     {
         public override void Init()
         {
-            EntryTypeRegistry.Register(EntryType.PolygonSoupList, new PolygonSoupList());
+            EntryTypeRegistry.Register(EntryTypeBP.PolygonSoupList, new PolygonSoupList());
 
             PluginCommandRegistry.Register("dump_all_collisions", "Dump All Collisions", DumpAllCollisions, IsWorldCol);
             PluginCommandRegistry.Register("remove_wreck_surfaces", "Remove Wreck Surfaces", RemoveWreckSurfaces, IsWorldCol);
@@ -35,7 +35,7 @@ namespace WorldCollisionHandler
             {
                 BundleEntry entry = archive.Entries[i];
 
-                if (entry.Type == EntryType.PolygonSoupList)
+                if (entry.IsType(EntryTypeBP.PolygonSoupList))
                     return true;
             }
 
@@ -97,7 +97,7 @@ namespace WorldCollisionHandler
             {
                 BundleEntry entry = archive.Entries[i];
 
-                if (entry.Type == EntryType.PolygonSoupList)
+                if (entry.IsType(EntryTypeBP.PolygonSoupList))
                 {
                     PolygonSoupList list = new PolygonSoupList();
                     list.Read(entry);

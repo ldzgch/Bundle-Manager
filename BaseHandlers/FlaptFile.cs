@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using BundleFormat;
 using BundleUtilities;
@@ -432,7 +432,7 @@ namespace BaseHandlers
 
         public EntryType GetEntryType(BundleEntry entry)
         {
-            return EntryType.FlaptFile;
+            return EntryTypeBP.FlaptFile;
         }
 
         public IEntryEditor GetEditor(BundleEntry entry)

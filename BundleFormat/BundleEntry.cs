@@ -1,10 +1,13 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
 using BundleUtilities;
 
 namespace BundleFormat
 {
+    using RVer = EntryType.ResourceVer;
     public class EntryBlock
     {
         public bool Compressed;
@@ -65,6 +68,7 @@ namespace BundleFormat
         public string TypeName;
     }
 
+
     public class BundleEntry
     {
         public BundleArchive Archive;
@@ -101,6 +105,10 @@ namespace BundleFormat
             Archive.EntryCount = (uint)archive.Entries.Count;*/
             Dependencies = new List<Dependency>();
         }
+
+        // public abstract void setType(EntryType type);
+        // public abstract EntryType getType();
+
 
         public bool HasSection(int section)
         {
@@ -300,14 +308,16 @@ namespace BundleFormat
                     newID = Crc32.HashCrc32B(name);
                     if (newID == ID)
                         return name;
-                } else if (file.EndsWith("_CD"))
+                }
+                else if (file.EndsWith("_CD"))
                 {
                     string vehicleID = file.Substring(4).Replace("_CD", "").ToLower();
                     string name = vehicleID;
                     ulong newID = Crc32.HashCrc32B(name);
                     if (newID == ID)
                         return name;
-                } else if (file.EndsWith("_GR"))
+                }
+                else if (file.EndsWith("_GR"))
                 {
                     string vehicleID = file.Substring(4).Replace("_GR", "").ToLower();
                     string name = vehicleID + "_graphics";
@@ -335,28 +345,127 @@ namespace BundleFormat
 
         public Color GetColor()
         {
-            switch (Type)
+            if (Type.Ver == RVer.NFS) return Color.Transparent;
+            switch ((EntryTypeBP)(int)Type)
             {
-                case EntryType.Texture:
+                case EntryTypeBP.Texture:
                     return Color.Orange;
-                case EntryType.Material:
+                case EntryTypeBP.Material:  
                     return Color.HotPink;
-                case EntryType.Renderable:
+                case EntryTypeBP.Renderable:
                     return Color.Aquamarine;
-                case EntryType.InstanceList:
+                case EntryTypeBP.InstanceList:
                     return Color.BlueViolet;
-                case EntryType.EntryList:
+                case EntryTypeBP.EntryList:
                     return Color.Tomato;
-                case EntryType.Model:
+                case EntryTypeBP.Model:
                     return Color.Yellow;
-                case EntryType.PolygonSoupList:
+                case EntryTypeBP.PolygonSoupList:
                     return Color.Goldenrod;
-                case EntryType.GraphicsSpec:
+                case EntryTypeBP.GraphicsSpec:
                     return Color.SeaGreen;
                 default:
                     break;
             }
             return Color.Transparent;
         }
+
+        public bool IsType(EntryTypeBP t)
+        {
+            return (Type.Ver == RVer.BP && (int)Type == (int)t);
+        }
+        public bool IsType(EntryTypeNFS t)
+        {
+            return (Type.Ver == RVer.NFS && (int)Type == (int)t);
+        }
+
     }
 }
+
+    /*
+
+    public class EntryNFS : BundleEntry
+    {
+        public EntryTypeNFS TypeNFS;
+        public EntryNFS(BundleArchive a) :
+            base(a) {}
+        public override Color GetColor()
+        {
+                switch (TypeNFS)
+                {
+                    case EntryTypeNFS.Texture:
+                        return Color.Orange;
+                    case EntryTypeNFS.Material:
+                        return Color.HotPink;
+                    case EntryTypeNFS.Renderable:
+                        return Color.Aquamarine;
+                    case EntryTypeNFS.InstanceList:
+                        return Color.BlueViolet;
+                    case EntryTypeNFS.EntryList:
+                        return Color.Tomato;
+                    case EntryTypeNFS.Model:
+                        return Color.Yellow;
+                    case EntryTypeNFS.PolygonSoupList:
+                        return Color.Goldenrod;
+                    case EntryTypeNFS.VehicleGraphicsSpec:
+                        return Color.SeaGreen;
+                    default:
+                        break;
+                }
+            return Color.Transparent;
+        }
+        public override void setType(int type)
+        {
+            TypeNFS = (EntryTypeNFS)type;
+        }
+
+        public override int getType()
+        {
+            return (int)TypeNFS;
+        }
+    }
+
+
+    public class EntryBP : BundleEntry
+    {
+        public EntryTypeBP TypeBP;
+        public EntryBP(BundleArchive a) : base(a) { }
+        public override void setType(int type)
+        {
+            TypeBP = (EntryTypeBP)type;
+        }
+
+        public override int getType()
+        {
+            return (int)TypeBP;
+        }
+        public override Color GetColor()
+        {
+            switch (TypeBP)
+            {
+                case EntryTypeBP.Texture:
+                    return Color.Orange;
+                case EntryTypeBP.Material:
+                    return Color.HotPink;
+                case EntryTypeBP.Renderable:
+                    return Color.Aquamarine;
+                case EntryTypeBP.InstanceList:
+                    return Color.BlueViolet;
+                case EntryTypeBP.EntryList:
+                    return Color.Tomato;
+                case EntryTypeBP.Model:
+                    return Color.Yellow;
+                case EntryTypeBP.PolygonSoupList:
+                    return Color.Goldenrod;
+                case EntryTypeBP.GraphicsSpec:
+                    return Color.SeaGreen;
+                default:
+                    break;
+            }
+            return Color.Transparent;
+        }
+
+    }
+
+}
+    */

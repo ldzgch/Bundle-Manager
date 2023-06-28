@@ -791,7 +791,7 @@ namespace BaseHandlers
 
         public EntryType GetEntryType(BundleEntry entry)
         {
-            return EntryType.TriggerData;
+            return EntryTypeBP.TriggerData;
         }
 
         public bool Write(BundleEntry entry)

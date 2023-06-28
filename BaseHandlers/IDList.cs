@@ -27,7 +27,7 @@ namespace BaseHandlers
 
         public EntryType GetEntryType(BundleEntry entry)
         {
-            return EntryType.EntryList;
+            return EntryTypeBP.EntryList;
         }
 
         private void Clear()

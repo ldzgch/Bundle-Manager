@@ -796,7 +796,7 @@ namespace BaseHandlers
 
         public EntryType GetEntryType(BundleEntry entry)
         {
-            return EntryType.AptData;
+            return EntryTypeBP.AptData;
         }
 
         public IEntryEditor GetEditor(BundleEntry entry)

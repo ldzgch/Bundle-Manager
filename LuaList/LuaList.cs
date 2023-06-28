@@ -35,7 +35,7 @@ namespace LuaList
 
         public EntryType GetEntryType(BundleEntry entry)
         {
-            return EntryType.LUAList;
+            return EntryTypeBP.LUAList;
         }
 
         public int getLengthOfHeader()

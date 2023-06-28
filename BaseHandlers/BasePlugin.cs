@@ -7,16 +7,16 @@ namespace BaseHandlers
     {
         public override void Init()
         {
-            EntryTypeRegistry.Register(EntryType.TriggerData, new TriggerData());
-            EntryTypeRegistry.Register(EntryType.StreetData, new StreetData());
-            EntryTypeRegistry.Register(EntryType.ProgressionData, new ProgressionData());
-            EntryTypeRegistry.Register(EntryType.EntryList, new IDList());
-            EntryTypeRegistry.Register(EntryType.TrafficData, new Traffic());
-            EntryTypeRegistry.Register(EntryType.FlaptFile, new FlaptFile());
+            EntryTypeRegistry.Register(EntryTypeBP.TriggerData, new TriggerData());
+            EntryTypeRegistry.Register(EntryTypeBP.StreetData, new StreetData());
+            EntryTypeRegistry.Register(EntryTypeBP.ProgressionData, new ProgressionData());
+            EntryTypeRegistry.Register(EntryTypeBP.EntryList, new IDList());
+            EntryTypeRegistry.Register(EntryTypeBP.TrafficData, new Traffic());
+            EntryTypeRegistry.Register(EntryTypeBP.FlaptFile, new FlaptFile());
             //EntryTypeRegistry.Register(EntryType.AptDataHeaderType, new AptData());
-            EntryTypeRegistry.Register(EntryType.InstanceList, new InstanceList());
-            EntryTypeRegistry.Register(EntryType.GraphicsSpec, new GraphicsSpec());
-            EntryTypeRegistry.Register(EntryType.Renderable, new Renderable());
+            EntryTypeRegistry.Register(EntryTypeBP.InstanceList, new InstanceList());
+            EntryTypeRegistry.Register(EntryTypeBP.GraphicsSpec, new GraphicsSpec());
+            EntryTypeRegistry.Register(EntryTypeBP.Renderable, new Renderable());
         }
 
         public override string GetID()

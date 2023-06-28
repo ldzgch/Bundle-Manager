@@ -148,7 +148,7 @@ namespace VehicleList
 
         public EntryType GetEntryType(BundleEntry entry)
         {
-            return EntryType.VehicleList;
+            return EntryTypeBP.VehicleList;
         }
 
         private void Clear()

@@ -436,9 +436,9 @@ namespace BundleManager
 
                 int maxLength = -1;
 
-                Array types = Enum.GetValues(typeof(EntryType));
+                Array types = Enum.GetValues(typeof(EntryTypeBP));
 
-                foreach (EntryType type in types)
+                foreach (EntryTypeBP type in types)
                 {
                     int len = type.ToString().Length;
 

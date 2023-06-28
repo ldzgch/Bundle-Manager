@@ -43,7 +43,7 @@ namespace BaseHandlers
                         }
                     }
 
-                    if (descEntry1 != null && descEntry1.Type == EntryType.Texture)
+                    if (descEntry1 != null &&  descEntry1.IsType(EntryTypeBP.Texture))
                     {
                         if (entry.Console)
                             result.Texture = GameImage.GetImagePS3(descEntry1.EntryBlocks[0].Data, descEntry1.EntryBlocks[1].Data);

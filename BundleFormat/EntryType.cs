@@ -1,6 +1,66 @@
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Drawing;
+using System.Reflection;
+using System.Xml.Linq;
+using System.Runtime.InteropServices;
+using System;
+
 namespace BundleFormat
 {
-    public enum EntryType
+    public class EntryType : IEquatable<EntryType>
+    {
+        int EnumVal
+        { get; set; }
+        public ResourceVer Ver;
+        public enum ResourceVer
+        {
+            BP,
+            NFS,
+        }
+        public override string ToString()
+        {
+            return (Ver == ResourceVer.BP) ? ((EntryTypeBP)EnumVal).ToString() : ((EntryTypeNFS)EnumVal).ToString();
+        }
+
+        public EntryType() { }
+        public EntryType(EntryTypeBP t)
+        {
+            Ver = ResourceVer.BP;
+            EnumVal = (int)t;
+        }
+        public EntryType(EntryTypeNFS t)
+        {
+            Ver = ResourceVer.NFS;
+            EnumVal = (int)t;
+        }
+        public static explicit operator int(EntryType t) { return t.EnumVal; }
+
+        public static implicit operator EntryType(EntryTypeNFS t) { return new EntryType(t); }
+        public static implicit operator EntryType(EntryTypeBP t) { return new EntryType(t); }
+
+        public bool Equals(EntryType other)
+        {
+            if (other is null) return false;
+            return Ver == other.Ver && EnumVal == other.EnumVal;
+        } 
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+            return Equals(obj as EntryType);
+        }
+        public override int GetHashCode()
+        {
+            return (Ver, EnumVal).GetHashCode();
+        }
+
+    }
+
+
+    public enum EntryTypeBP
     {
         // List pulled from RED
 
@@ -135,4 +195,95 @@ namespace BundleFormat
 
         Invalid = 0x99999
     }
+
+    public enum EntryTypeNFS // Need for Speed (Burnout Wiki)
+    {
+        Texture = 0x1,  // RwRaster
+        Material = 0x2, //	GtMaterial
+        VertexDescriptor = 0x3, //	RwVertexDesc
+        VertexProgramState = 0x4,
+        Renderable = 0x5, // RwRenderable
+        MaterialState = 0x6,
+        SamplerState = 0x7, //	RwSamplerState
+        ShaderProgramBuffer = 0x8, //	RwShaderProgramBuffer
+        AttribSysSchema = 0x10,
+        AttribSysVault = 0x11,
+        GeneSysDefinition = 0x12,
+        GeneSysInstance = 0x13,
+        GenesysType = 0x14, // Type, GeneSys2 Type
+        GenesysObject = 0x15, //	Object, GeneSys2 Object
+        BinaryFile = 0x16,
+        EntryList = 0x20,
+        Font = 0x30,
+        LuaCode = 0x40,
+        InstanceList = 0x50,
+        Model = 0x51,
+        ColourCube = 0x52,
+        Shader = 0x53,
+        PolygonSoupList = 0x60, // PolySoupList
+        PolygonSoupTree = 0x61,
+        NavigationMesh = 0x68, // NavMesh
+        TextFile = 0x70,
+        TextFileList = 0x71,
+        ResourceHandleList = 0x72,
+        LuaData = 0x74, // LUA
+        AllocatorInPool = 0x78,
+        Ginsu = 0x80, // GinsuWaveContent
+        Wave = 0x81,
+        WaveContainerTable = 0x82,
+        GameplayLinkData = 0x83, // GameplayLink
+        WaveDictionary = 0x84,
+        MicroMonoStream = 0x85,
+        Reverb = 0x86,
+        ZoneList = 0x90,
+        WorldPaintMap = 0x91,
+        IceAnimDictionary = 0xA0,
+        AnimationList = 0xB0,
+        PathAnimation = 0xB1,
+        AnimSkel = 0xB2, // Skeleton
+        Animation = 0xB3,
+        CgsVertexProgramState = 0xC0,
+        CgsProgramBuffer = 0xC1,
+        DeltaDeleted = 0xDE,
+        VehicleList = 0x105,
+        VehicleGraphicsSpec = 0x106, // GraphicsSpec
+        VehiclePhysicsSpec = 0x107, // PhysicsSpec
+        WheelGraphicsSpec = 0x10A,
+        EnvironmentKeyframe = 0x112,
+        EnvironmentTimeLine = 0x113,
+        EnvironmentDictionary = 0x114,
+        AIData = 0x200,
+        Language = 0x201, // LocalisedText
+        TriggerData = 0x202, // Trigger
+        RoadData = 0x203,
+        DynamicInstanceList = 0x204,
+        WorldObject = 0x205,
+        ZoneHeader = 0x206,
+        VehicleSound = 0x207, // VehicleSoundData
+        RoadMapDataResourceType = 0x208, // RoadData
+        CharacterSpec = 0x209,
+        CharacterList = 0x20A,
+        SurfaceSounds = 0x20B,
+        ReverbRoadData = 0x20C,
+        CameraTake = 0x20D,
+        CameraTakeList = 0x20E,
+        GroundcoverCollection = 0x20F, // Groundcover
+        ControlMesh = 0x210,
+        CutsceneData = 0x211, // Cutscene
+        CutsceneList = 0x212,
+        LightInstanceList = 0x213,
+        GroundcoverInstances = 0x214,
+        CompoundObject = 0x215,
+        CompoundInstanceList = 0x216,
+        PropObject = 0x217,
+        PropInstanceList = 0x218,
+        ZoneAmbienceList = 0x219,
+        BearEffect = 0x301,
+        BearGlobalParameters = 0x302,
+        ConvexHull = 0x303,
+        HSMData = 0x501,
+        TrafficLaneData = 0x701, // TrafficData
+
+    }
+
 }

@@ -654,7 +654,7 @@ namespace VaultFormat
 
         public EntryType GetEntryType(BundleEntry entry)
         {
-            return EntryType.AttribSysVault;
+            return EntryTypeBP.AttribSysVault;
         }
 
         public IEntryEditor GetEditor(BundleEntry entry)
@@ -669,4 +669,4 @@ namespace VaultFormat
             return attribSysVaultForm;
         }
     }
-}
+}   
