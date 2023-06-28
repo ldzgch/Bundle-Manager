@@ -171,8 +171,17 @@ namespace BurnoutImage
                 }
                 else
                 {
+                    // nfs hp textures have 0xc bytes before the comp type
+                    // bp has 0x10
+                    br.BaseStream.Seek(0x8, SeekOrigin.Begin);
+                    int test = br.ReadInt32();
+                    if (test == 0) // skip one int32 if bp
+                    {
+                        br.ReadInt32();
+                        
+                    }
                     // OLD PC
-                    br.BaseStream.Seek(0x10, SeekOrigin.Begin);
+                    // br.BaseStream.Seek(0x10, SeekOrigin.Begin);
                     CompressionType type = CompressionType.UNKNOWN;
                     byte[] compression = br.ReadBytes(4);
                     string compressionString = Encoding.ASCII.GetString(compression);

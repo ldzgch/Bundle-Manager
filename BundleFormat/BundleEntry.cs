@@ -345,27 +345,36 @@ namespace BundleFormat
 
         public Color GetColor()
         {
-            if (Type.Ver == RVer.NFS) return Color.Transparent;
-            switch ((EntryTypeBP)(int)Type)
+            if (Type.Ver == RVer.BP)
             {
-                case EntryTypeBP.Texture:
-                    return Color.Orange;
-                case EntryTypeBP.Material:  
-                    return Color.HotPink;
-                case EntryTypeBP.Renderable:
-                    return Color.Aquamarine;
-                case EntryTypeBP.InstanceList:
-                    return Color.BlueViolet;
-                case EntryTypeBP.EntryList:
-                    return Color.Tomato;
-                case EntryTypeBP.Model:
-                    return Color.Yellow;
-                case EntryTypeBP.PolygonSoupList:
-                    return Color.Goldenrod;
-                case EntryTypeBP.GraphicsSpec:
-                    return Color.SeaGreen;
-                default:
-                    break;
+                switch ((EntryTypeBP)(int)Type)
+                {
+                    case EntryTypeBP.Texture:
+                        return Color.Orange;
+                    case EntryTypeBP.Material:  
+                        return Color.HotPink;
+                    case EntryTypeBP.Renderable:
+                        return Color.Aquamarine;
+                    case EntryTypeBP.InstanceList:
+                        return Color.BlueViolet;
+                    case EntryTypeBP.EntryList:
+                        return Color.Tomato;
+                    case EntryTypeBP.Model:
+                        return Color.Yellow;
+                    case EntryTypeBP.PolygonSoupList:
+                        return Color.Goldenrod;
+                    case EntryTypeBP.GraphicsSpec:
+                        return Color.SeaGreen;
+                    default:
+                        break;
+                }
+            } else
+            {
+                switch((EntryTypeNFS)(int)Type)
+                {
+                    case EntryTypeNFS.Texture: return Color.Orange;
+                    default: break;
+                }
             }
             return Color.Transparent;
         }

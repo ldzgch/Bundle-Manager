@@ -461,7 +461,7 @@ namespace BundleManager
             {
                 ImageVisible = false;
             }
-            else if (_entry.IsType(EntryTypeBP.Texture))
+            else if (_entry.IsType(EntryTypeBP.Texture) || _entry.IsType(EntryTypeNFS.Texture))
             {
                 if (_entry.Console)
                     Image = GameImage.GetImagePS3(_entry.EntryBlocks[0].Data, _entry.EntryBlocks[1].Data);
