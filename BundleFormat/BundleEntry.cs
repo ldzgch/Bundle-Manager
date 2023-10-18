@@ -340,6 +340,14 @@ namespace BundleFormat
                     return name;
             }
 
+            if (IsType(EntryTypeNFS.GeneSysDefinition))
+            {
+                MemoryStream ms = MakeStream();
+                BinaryReader2 br = new BinaryReader2(ms);
+                br.BaseStream.Seek(0x11, SeekOrigin.Begin);
+                return br.ReadCStr();
+            }
+
             return "";
         }
 

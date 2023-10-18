@@ -40,6 +40,8 @@ namespace BaseHandlers
         public short Unknown14;
         public short Unknown15;
 
+        public byte[] rawdata;
+
         public List<short> UnknownShorts;
 
         public Traffic()
@@ -49,7 +51,10 @@ namespace BaseHandlers
 
         public IEntryEditor GetEditor(BundleEntry entry)
         {
-            return null;
+            TrafficEditor   editor = new TrafficEditor();
+            editor.data = this;
+            editor.entry = entry;
+            return editor;
         }
 
         public EntryType GetEntryType(BundleEntry entry)
@@ -97,8 +102,9 @@ namespace BaseHandlers
         public bool Read(BundleEntry entry, ILoader loader = null)
         {
             Clear();
+            rawdata = entry.MakeStream().ToArray();
+            MemoryStream ms = new MemoryStream(rawdata);
 
-            MemoryStream ms = entry.MakeStream();
             BinaryReader2 br = new BinaryReader2(ms);
             br.BigEndian = entry.Console;
 
