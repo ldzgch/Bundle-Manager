@@ -1,5 +1,5 @@
 # Bundle Manager
-A Program to work with Burnout Paradise Bundle files.
+A Program to work with Burnout Paradise Bundle files. (And some NFS Hot Pursuit 2010 files also.)
 
 # Libraries Used
 * [OpenTK](https://github.com/opentk/opentk)
